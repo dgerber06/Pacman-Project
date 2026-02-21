@@ -131,9 +131,31 @@ def nullHeuristic(state, problem=None) -> float:
     return 0
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+	#Intializes priority and visited dictionary
+	priority = util.PriorityQueue()
+	visited = {}
+
+	#Pushes the start state
+	priority.push((problem.getStartState(), [], 0), heuristic(problem.getStartState(), problem))
+	
+	#Loops till the search is exhuasted or a solution is found
+	while not priority.isEmpty():
+		state, actions, cost = priority.pop()
+
+		if problem.isGoalState(state):
+			return actions
+		
+		#If the state is newly discovered is more optimal, than expand
+		if state not in visited or cost < visited[state]:
+			visited[state] = cost
+			
+			#Stores all successor in the priority score with predicted cost to goal
+			for next_state, action, next_cost in problem.getSuccessors(state):
+				next_actions = actions + [action]
+				new_cost = cost + next_cost
+				priority.push((next_state, next_actions, new_cost), new_cost + heuristic(next_state, problem))
+
+	return []
 
 # Abbreviations
 bfs = breadthFirstSearch
