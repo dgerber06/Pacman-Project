@@ -362,6 +362,22 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+    queue = util.PriorityQueue()
+    visited = {}
+
+    queue.push((state, 0), 0)
+
+    while not queue.isEmpty():
+        next_state, cost = queue.pop()
+        if problem.isGoalState(next_state):
+            return manhattanHeuristic(state, next_state)
+
+        if next_state not in visited or cost < visited[next_state]:
+            visited[next_state] = cost
+
+            for suc_state, suc_action, suc_cost in problem.getSuccessors(next_state):
+                total_cost = suc_cost + cost
+                queue.push((suc_state, total_cost), manhattanHeuristic(state, suc_state) + total_cost)
     return 0 # Default to trivial solution
 
 
@@ -453,7 +469,16 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    if problem.isGoalState(state):
+        return 0 
+
+    x = 0  
+    cost = 0
+    for food in foodGrid.asList():
+        cost = cost + util.manhattanDistance(position, food)
+        x = x + 1
+
+    return (cost / x)
 
 
 class ClosestDotSearchAgent(SearchAgent):
