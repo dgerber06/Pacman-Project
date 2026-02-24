@@ -360,14 +360,17 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
         return 0
 
     cost = 0
+    print(lst_vis)
     while False in lst_vis:
          min_index, min_dist = (-1,-1)
          for i in range(len(corners)):
+            print(lst_vis[i])
             if not lst_vis[i]:
                  dist = util.manhattanDistance(position, corners[i])
                  if dist < min_dist or min_dist == -1:
                      min_index, min_dist = (i, dist)
 		 
+         print(min_dist)
          lst_vis[min_index] = True
          cost = cost + min_dist
          position = corners[min_index]
