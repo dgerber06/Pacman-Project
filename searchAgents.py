@@ -468,24 +468,16 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     if problem.isGoalState(state):
         return 0 
 
-    cost = 0
-
     food_list = foodGrid.asList()
     cur_pos = position
-    i = len(food_list)
 
-    while not(len(food_list) == 0):
-          min_food, min_dist = (None, -1)
-          for food in food_list:
-              dist = util.manhattanDistance(cur_pos, food)
-              if dist < min_dist or min_dist == -1 :
-                  min_food, min_dist = (food, dist)
-		  
-          cost = cost + min_dist
-          cur_pos = min_food
-          food_list.remove(min_food)
-    
-    return cost / 2 
+    max_food, max_dist = (None, -1)
+    for food in food_list: 
+        dist = mazeDistance(cur_pos, food, problem.startingGameState)
+        if dist > max_dist:
+            max_food, max_dist = (food, dist)
+		   
+    return max_dist  
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
