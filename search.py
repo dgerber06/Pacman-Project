@@ -76,52 +76,59 @@ def tinyMazeSearch(problem: SearchProblem) -> List[Directions]:
     return  [s, s, w, s, w, w, s, w]
 
 def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
-    """
-    Search the deepest nodes in the search tree first.
-
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    """
-    "*** YOUR CODE HERE ***"
-    fringe = util.Stack()
-    fringe.push((problem.getStartState(), []))
-
-    visited = set()
-    while not fringe.isEmpty():
-        current_state, actions = fringe.pop()
-        if problem.isGoalState(current_state):
-            return actions
-        
-        #only expand node if it hasn't been visited
-        if current_state not in visited: 
-            visited.add(current_state)
-
-            #add successors to stack
-            for next_state, action, cost in problem.getSuccessors(current_state):
-                if next_state not in visited: 
-                    new_actions = actions + [action]
-                    fringe.push((next_state, new_actions))
-
-    #failed to find 
-    return []
+    from util import Stack
+    stk = Stack()
+    start = problem.getStartState()
+    stk.push((start, []))
+    vis = set()
+    while not stk.isEmpty():
+        state, path = stk.pop()
+        if state in vis:
+            continue
+        vis.add(state)
+        if problem.isGoalState(state):
+            return path
+        for successor, action, stepCost in problem.getSuccessors(state):
+            if successor not in vis:
+                stk.push((successor, path + [action]))
+    return[]
 
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import Queue
+    que = Queue()
+    strt = problem.getStartState()
+    que.push((strt, []))
+    vist = set()
+    vist.add(strt)
+    while not que.isEmpty():
+        stte, pth = que.pop()
+        if problem.isGoalState(stte):
+            return pth
+        for succ, acc, sco in problem.getSuccessors(stte):
+            if succ not in vist:
+                vist.add(succ)
+                que.push((succ, pth +[acc]))
+    return[]
+
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import PriorityQueue
+    pq = PriorityQueue()
+    sat = problem.getStartState()
+    pq.push((sat, [], 0), 0)
+    vs = dict()
+    while not pq.isEmpty():
+        sat, ph, cs = pq.pop()
+        if sat in vs and vs[sat] <= cs:
+            continue
+        vs[sat] = cs
+        if problem.isGoalState(sat):
+            return ph
+        for successor, act, scs in problem.getSuccessors(sat):
+            ncs = cs + scs
+            pq.push((successor, ph + [act], ncs), ncs)
+    return []
 
 def nullHeuristic(state, problem=None) -> float:
     """
